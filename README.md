@@ -4,5 +4,5 @@ Collection of Kids games
 
 ## Credits
 
-https://javascript30.com/
-http://www.cornify.com
+1. https://javascript30.com/
+2. http://www.cornify.com
