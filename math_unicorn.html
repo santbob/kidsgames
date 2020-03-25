@@ -11,6 +11,10 @@
             padding: 10px;
         }
 
+        .cont {
+            position: relative;
+        }
+
         #question {
             background: #5758BB;
             width: 100%;
@@ -22,16 +26,22 @@
         }
 
         #answer {
-            visibility: hidden;
+            position: absolute;
+            background: #5758BB;
+            border: 0px solid #5758BB;
+            top: 10px;
+            left: 10px;
         }
     </style>
     <script type="text/javascript" src="https://www.cornify.com/js/cornify.js"></script>
 </head>
 
 <body>
-    <div id='question'></div>
-    <div id="corns"></div>
-    <input type="number" id="answer" />
+    <div class="cont">
+        <div id='question'></div>
+        <input type="text" id="answer" />
+    </div>
+
     <!-- <div><button id="check-answer">Check</button></div> -->
     <script>
         let answer = '';
