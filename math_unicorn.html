@@ -12,25 +12,33 @@
         }
 
         .cont {
-            position: relative;
-        }
-
-        #question {
-            background: #5758BB;
-            width: 100%;
-            font-size: xxx-large;
-            color: white;
             text-align: center;
             padding: 15px 0px;
             border-radius: 5px;
+            background: #5758BB;
+            width: 100%;
+        }
+
+        #question {
+            font-size: xxx-large;
+            color: white;
+            text-align: right;
+            padding-right: 10px;
         }
 
         #answer {
-            position: absolute;
+            height: 60px;
+            width: 60px;
+            vertical-align: baseline;
+            font-size: xxx-large;
             background: #5758BB;
-            border: 0px solid #5758BB;
-            top: 10px;
-            left: 10px;
+            color: white;
+            border: 0px;
+        }
+
+        #answer:focus {
+            border: 0px;
+            outline: none;
         }
     </style>
     <script type="text/javascript" src="https://www.cornify.com/js/cornify.js"></script>
@@ -38,8 +46,7 @@
 
 <body>
     <div class="cont">
-        <div id='question'></div>
-        <input type="text" id="answer" />
+        <span id="question"></span><input type="text" id="answer" maxlength="2" max="99" />
     </div>
 
     <!-- <div><button id="check-answer">Check</button></div> -->
@@ -50,14 +57,16 @@
 
         const questionElem = document.getElementById('question')
         const answerElem = document.getElementById('answer')
+
         cornify_setcookie('cornify', '0', 1);
         window.addEventListener('keyup', function (e) {
             if (!isNaN(parseInt(e.key))) {
                 pressed.push(e.key);
-                if (pressed.length > answerLength) {
+                if (pressed.length == answerLength) {
+                    checkAnswer()
                     pressed.splice(0, pressed.length - answerLength);
+                    answerElem.value = ''
                 }
-                checkAnswer()
             }
         });
 
@@ -65,7 +74,7 @@
             const num1 = getRandomIntInclusive(1, 90)
             const num2 = getRandomIntInclusive(1, 9)
 
-            question.textContent = `${num1} + ${num2} = `
+            questionElem.textContent = `${num1} + ${num2} = `
             answer = `${num1 + num2}`
             answerLength = answer.length
             pressed.splice(0, pressed.length)
