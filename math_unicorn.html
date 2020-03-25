@@ -46,7 +46,7 @@
 
 <body>
     <div class="cont">
-        <span id="question"></span><input type="text" id="answer" maxlength="2" max="99" />
+        <span id="question"></span><input type="number" id="answer" maxlength="2" max="99" />
     </div>
 
     <!-- <div><button id="check-answer">Check</button></div> -->
@@ -94,7 +94,7 @@
             return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
         }
         setupNewQuestion();
-        answerElem.focus()
+        answerElem.value = ''
     </script>
     <!--credits - javascript30.com cornify.com -->
 </body>
