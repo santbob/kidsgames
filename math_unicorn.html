@@ -94,6 +94,8 @@
             return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
         }
         setupNewQuestion();
+        answerElem.focus();
+        answerElem.click();
         answerElem.value = ''
     </script>
     <!--credits - javascript30.com cornify.com -->
