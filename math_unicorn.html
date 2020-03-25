@@ -3,20 +3,27 @@
 
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=contain">
     <title>KidsGames - Addition</title>
     <style type="text/css">
-      body {
-        background: #ebcbf4;
-        padding: 10px;
-      }
-      #question {
-        background: #5758BB;
-        width: 100%;
-        font-size: xxx-large;
-        color: white;
-        text-align: center;
-        border-radius: 5px;
-      }
+        body {
+            background: #ebcbf4;
+            padding: 10px;
+        }
+
+        #question {
+            background: #5758BB;
+            width: 100%;
+            font-size: xxx-large;
+            color: white;
+            text-align: center;
+            padding: 15px 0px;
+            border-radius: 5px;
+        }
+
+        #answer {
+            visibility: hidden;
+        }
     </style>
     <script type="text/javascript" src="https://www.cornify.com/js/cornify.js"></script>
 </head>
@@ -24,50 +31,53 @@
 <body>
     <div id='question'></div>
     <div id="corns"></div>
-    <!-- <div class="answer-box"><input type="number" id="answer" /></div> -->
+    <input type="number" id="answer" />
     <!-- <div><button id="check-answer">Check</button></div> -->
     <script>
-    let answer = '';
-    let answerLength = answer.length;
-    const pressed = [];
+        let answer = '';
+        let answerLength = answer.length;
+        const pressed = [];
 
-    const questionElem = document.getElementById('question')
-    cornify_setcookie('cornify', '0', 1);
-    window.addEventListener('keyup', function(e) {
-        if (!isNaN(parseInt(e.key))) {
-            pressed.push(e.key);
-            if (pressed.length > answerLength) {
-                pressed.splice(0, pressed.length - answerLength);
+        const questionElem = document.getElementById('question')
+        const answerElem = document.getElementById('answer')
+        cornify_setcookie('cornify', '0', 1);
+        window.addEventListener('keyup', function (e) {
+            if (!isNaN(parseInt(e.key))) {
+                pressed.push(e.key);
+                if (pressed.length > answerLength) {
+                    pressed.splice(0, pressed.length - answerLength);
+                }
+                checkAnswer()
             }
-            checkAnswer()
+        });
+
+        function setupNewQuestion() {
+            const num1 = getRandomIntInclusive(1, 90)
+            const num2 = getRandomIntInclusive(1, 9)
+
+            question.textContent = `${num1} + ${num2} = `
+            answer = `${num1 + num2}`
+            answerLength = answer.length
+            pressed.splice(0, pressed.length)
         }
-    });
 
-    function setupNewQuestion() {
-        const num1 = getRandomIntInclusive(1, 90)
-        const num2 = getRandomIntInclusive(1, 9)
+        function checkAnswer() {
+            console.log(pressed.join(''));
+            if (pressed.join('').includes(answer)) {
+                cornify_add();
+                setupNewQuestion()
+            }
+        }
 
-        question.textContent = `${num1} + ${num2} = `
-        answer = `${num1 + num2}`
-        answerLength = answer.length
-        pressed.splice(0, pressed.length)
-    }
-
-    function checkAnswer() {
-        console.log(pressed.join(''));
-        if (pressed.join('').includes(answer)) {
-            cornify_add();
-            setupNewQuestion()
-        }  
-    }
-
-    function getRandomIntInclusive(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
-    }
-    setupNewQuestion();
+        function getRandomIntInclusive(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
+        }
+        setupNewQuestion();
+        answerElem.focus()
     </script>
     <!--credits - javascript30.com cornify.com -->
 </body>
+
 </html>
