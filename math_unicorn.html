@@ -132,10 +132,10 @@
 
         function recordNumberPressed(num) {
             pressed.push(num);
-            if (pressed.length == answerLength) {
-                checkAnswer()
+            if (pressed.length > answerLength) {
                 pressed.splice(0, pressed.length - answerLength);
             }
+            checkAnswer()
         }
         function setupNewQuestion() {
             const num1 = getRandomIntInclusive(1, 90)
