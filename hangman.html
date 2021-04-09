@@ -96,6 +96,12 @@
             cursor: pointer;
         }
 
+        button:disabled {
+            background: #ccc;
+            cursor: none;
+            color: #999
+        }
+
         .game-on>section {
             margin: 20px 0;
         }
@@ -277,6 +283,8 @@
             rightLeg.style.display = 'none'
             hangRope.style.display = 'none'
             wordInput.value = ''
+            letterInput.disabled = false
+            checkLetterButton.disabled = false
             resultSection.classList.remove('show')
             wrongGuesses = []
             hangManWord = []
@@ -324,7 +332,6 @@
         const updateSVG = () => {
             const failCount = wrongGuesses.length
             switch (failCount) {
-
                 case 7: {
                     hangRope.style.display = 'block'
                 }
@@ -340,11 +347,9 @@
                 case 3: {
                     leftHand.style.display = 'block'
                 }
-
                 case 2: {
                     bodyLine.style.display = 'block'
                 }
-
                 case 1: {
                     face.style.display = 'block'
                 }
@@ -382,13 +387,18 @@
             }
         }
 
+        const updateResult = (msg) => {
+            resultSection.classList.toggle('show')
+            result.textContent = msg
+            letterInput.disabled = true
+            checkLetterButton.disabled = true
+        }
+
         const checkResult = () => {
             if (hangManWord.join('') === gameWord) {
-                resultSection.classList.toggle('show')
-                result.textContent = 'You Rock 🚀, Awesome you WON the game'
+                updateResult('You Rock 🚀, Awesome you WON the game')
             } else if (wrongGuesses.length >= MAX_WRONG_GUESSES) {
-                resultSection.classList.toggle('show')
-                result.textContent = 'Bummer, Hangman died 😞, Try again'
+                updateResult('Bummer, Hangman died 😞, Try again')
             }
         }
 
