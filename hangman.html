@@ -80,7 +80,7 @@
             padding: 0.5rem;
             font-size: large;
             font-family: 'Kiwi Maru', serif;
-            min-width: 300px;
+            min-width: 250px;
         }
 
         button {
@@ -170,7 +170,7 @@
             transition-delay: 0.25s;
         }
 
-        svg.game-over #face.show {
+        svg.game-lost #face.show {
             animation: rotateAnim 0.5s linear forwards;
             transition: none;
         }
@@ -325,7 +325,7 @@
         let gameWord = ''
 
         const reset = () => {
-            svg.classList.remove('game-over')
+            svg.classList.remove('game-lost')
             hangRope.classList.remove('show')
             face.classList.remove('show')
             bodyLine.classList.remove('show')
@@ -446,19 +446,21 @@
             }
         }
 
-        const updateResult = (msg) => {
+        const updateResult = (msg, lost) => {
             resultSection.classList.toggle('show')
             result.textContent = msg
             letterInput.disabled = true
             checkLetterButton.disabled = true
-            svg.classList.add('game-over')
+            if (lost) {
+                svg.classList.add('game-lost')
+            }
         }
 
         const checkResult = () => {
             if (hangManWord.join('') === gameWord) {
                 updateResult('You Rock 🚀, Awesome you WON the game')
             } else if (wrongGuesses.length >= MAX_WRONG_GUESSES) {
-                updateResult('Bummer, Hangman died 😞, Try again')
+                updateResult('Bummer, Hangman died 😞, Try again', true)
             }
         }
 
