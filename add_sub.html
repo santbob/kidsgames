@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=contain"
+    />
+    <title>KidsGames - Math</title>
+    <style type="text/css">
+      body {
+        background: radial-gradient(black 15%, transparent 16%) 0 0,
+          radial-gradient(black 15%, transparent 16%) 8px 8px,
+          radial-gradient(rgba(255, 255, 255, 0.1) 15%, transparent 20%) 0 1px,
+          radial-gradient(rgba(255, 255, 255, 0.1) 15%, transparent 20%) 8px 9px;
+        background-color: #282828;
+        background-size: 16px 16px;
+        padding: 10px;
+      }
+
+      .cont {
+        display: flex;
+        text-align: center;
+        padding: 15px 0px;
+        border-radius: 5px;
+        background: transparent;
+        flex-wrap: wrap;
+      }
+      .unit {
+        width: 60px;
+        margin: 10px;
+        padding: 10px;
+        font-weight: bold;
+        font-size: x-large;
+        background-color: rgb(250, 176, 240);
+        border-radius: 0px 6px 0px;
+      }
+      .q {
+        display: flex;
+      }
+      .sign {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+      }
+      .num {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 5px;
+        flex: 2;
+      }
+
+      .a > input {
+        box-sizing: border-box;
+        border: 1px solid grey;
+        border-left-width: 0;
+        border-right-width: 0;
+        padding: 5px;
+        font-size: large;
+        width: 90%;
+        margin: 0;
+        text-align: right;
+      }
+      .result {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        flex-direction: column;
+      }
+      #check-answer {
+        margin: 10px;
+        background-color: #f79bed;
+        border-radius: 5px;
+        text-align: center;
+        border-color: white;
+        padding: 10px 20px;
+        font-weight: 700;
+        border: 2px white solid;
+        width: 400px;
+        color: black;
+      }
+
+      #score {
+        color: white;
+        font-size: xx-large;
+      }
+      .right-answer {
+        background-color: greenyellow;
+      }
+      .wrong-answer {
+        background-color: red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="cont">
+      <!-- <div class="unit">
+        <div class="q">
+          <div class="sign">+</div>
+          <div class="num">45<br />35</div>
+        </div>
+        <div class="a"><input type="text" name="a1" /></div>
+      </div>
+       -->
+    </div>
+    <div class="result">
+      <button id="check-answer">Check Answer</button>
+      <div id="score"></div>
+    </div>
+
+    <script>
+      let qa_data = [];
+      const checkAnswerBtn = document.getElementById('check-answer');
+      const scoreElem = document.getElementById('score');
+
+      function getMobileOperatingSystem() {
+        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        // Windows Phone must come first because its UA also contains "Android"
+        if (/windows phone/i.test(userAgent)) {
+          return 'Windows Phone';
+        }
+
+        if (/android/i.test(userAgent)) {
+          return 'Android';
+        }
+
+        // iOS detection from: http://stackoverflow.com/a/9039885/177710
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+          return 'iOS';
+        }
+
+        return 'unknown';
+      }
+
+      function getRandomIntInclusive(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
+      }
+
+      function getAnswer(num1, num2, sign) {
+        switch (sign) {
+          case '+':
+            return num1 + num2;
+          case '-':
+            return Math.abs(num1 - num2);
+          case '*':
+            return num1 * num2;
+          case '/':
+            return num1 / num2 + '.' + (num1 % num2);
+        }
+      }
+      function getUnitHtml(sign, num1, num2, index) {
+        return `<div class="unit">
+        <div class="q">
+          <div class="sign">${sign}</div>
+          <div class="num">${num1}<br />${num2}</div>
+        </div>
+        <div class="a"><input type="text" name="a_${index}" id="a_${index}"/></div>
+      </div>`;
+      }
+
+      function setupNewQuestion(sign) {
+        const limit = sign === '*' ? 9 : 99;
+        const num1 = getRandomIntInclusive(1, limit);
+        const num2 = getRandomIntInclusive(1, limit);
+        const html = getUnitHtml(sign, num1, num2, qa_data.length);
+        qa_data.push({ num1, num2, answer: getAnswer(num1, num2, sign) });
+        return html;
+      }
+
+      function setUpQuestions() {
+        qa_data = [];
+        let i = 0,
+          html = '';
+        for (i = 0; i < 10; i++) {
+          html += setupNewQuestion('+');
+        }
+        i = 0;
+        for (i = 0; i < 10; i++) {
+          html += setupNewQuestion('-');
+        }
+        i = 0;
+        for (i = 0; i < 10; i++) {
+          html += setupNewQuestion('*');
+        }
+        document.getElementsByClassName('cont')[0].innerHTML = html;
+      }
+
+      setUpQuestions();
+
+      function checkAnswer() {
+        const units = document.querySelectorAll('.unit');
+        const elems = document.querySelectorAll('.unit input');
+        let total = elems.length;
+        let score = 0;
+        for (index in elems) {
+          if (elems.hasOwnProperty(index)) {
+            if (elems[index].value == qa_data[index].answer) {
+              units[index].className = 'unit right-answer';
+              score += 1;
+            } else {
+              units[index].className = 'unit wrong-answer';
+            }
+          }
+        }
+        scoreElem.innerHTML = `Your Score ${score}/${total}`;
+      }
+
+      function clearAnswers() {
+        const units = document.querySelectorAll('.unit');
+        units.forEach(function (unit) {
+          unit.className = 'unit';
+        });
+        const inputs = document.querySelectorAll('.unit input');
+        inputs.forEach(function (input) {
+          input.value = '';
+        });
+      }
+
+      checkAnswerBtn.addEventListener('click', checkAnswer);
+
+      // const isMobileOs = getMobileOperatingSystem() !== 'unknown'
+      // if (isMobileOs) {
+      //     mobileSection.style.display = 'block'
+      //     mobileSection.addEventListener('click', function (event) {
+      //         if (event.target && event.target.dataset && event.target.dataset.num >= 0) {
+      //             if (!isNaN(parseInt(event.target.dataset.num)) && event.target.dataset.num < 10) {
+      //                 recordNumberPressed(event.target.dataset.num)
+      //             }
+      //         }
+      //     })
+      // } else {
+      //     mobileSection.style.display = 'none'
+      // }
+    </script>
+  </body>
+</html>
