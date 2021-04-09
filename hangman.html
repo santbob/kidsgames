@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HangMan Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@300;400;500&display=swap');
+
+        body {
+            padding: 0;
+            margin: 0;
+            font-family: 'Kiwi Maru', serif;
+        }
+
+        .with-sidebar {
+            overflow: hidden;
+        }
+
+        .with-sidebar>* {
+            display: flex;
+            flex-wrap: wrap;
+            margin: calc(10 / 2 * -1);
+            height: 100vh;
+        }
+
+        .with-sidebar>*>* {
+            margin: calc(10 / 2);
+            flex-basis: 100;
+            flex-grow: 1;
+        }
+
+        .with-sidebar>*> :first-child {
+            flex-basis: 0;
+            flex-grow: 999;
+            min-width: calc(50% - 10);
+        }
+
+        .entry {
+            background-color: #17141d;
+            color: #fff;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sidebar {
+            background: linear-gradient(360deg, rgb(227, 174, 230), #d59fe2);
+        }
+
+        .game-on {
+            display: none;
+            margin: 5px;
+        }
+
+        .game-on.show {
+            display: block;
+        }
+
+        .game-off {
+            display: none;
+            margin: 5px;
+        }
+
+        .game-off.show {
+            display: flex;
+        }
+
+        .game-on ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        input[type='text'] {
+            padding: 0.5rem;
+            font-size: large;
+            font-family: 'Kiwi Maru', serif;
+            min-width: 300px;
+        }
+
+        button {
+            font-size: large;
+            font-family: 'Kiwi Maru', serif;
+            background: #b82adc;
+            border: 0;
+            border-radius: 0 5px 5px 0;
+            padding: 0.5rem;
+            min-width: 6rem;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .game-on>section {
+            margin: 20px 0;
+        }
+
+        .game-on p {
+            margin: 5px 0px;
+            padding: 0;
+        }
+
+        .game-on li {
+            margin: 0.5rem;
+            text-transform: capitalize;
+            border: 1px solid green;
+            background: green;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            font-size: large;
+        }
+
+        .game-on .wrong-guesses li {
+            border: 1px solid red;
+            background: red;
+        }
+
+        .result-section {
+            display: none;
+            text-align: center;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        .result-section p {
+            font-size: xx-large;
+            color: #b82adc
+        }
+
+        .result-section button {
+            border-radius: 5px 5px 5px 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="with-sidebar">
+        <div>
+            <!-- intermediary wrapper -->
+            <section class="entry">
+                <div class="game-off show">
+                    <input type="text" id="word" value='' placeholder='enter the word to find' autocomplete="false">
+                    <button id="startGame">Start</button>
+                </div>
+                <div class="game-on">
+                    <section>
+                        <input type="text" id="letter" value='' placeholder='guess a letter in the word'
+                            maxlength='1' />
+                        <button id="checkLetter">Check</button>
+                    </section>
+                    <section class="hangman-word">
+                        <p>Hangman Letters</p>
+                        <ul>
+                        </ul>
+                    </section>
+                    <section class="wrong-guesses">
+                        <p>Wrong Guesses</p>
+                        <ul>
+                        </ul>
+                    </section>
+                </div>
+                <!-- non-sidebar -->
+            </section>
+            <section class="sidebar">
+                <div class="result-section show">
+                    <p id="result"></p>
+                    <button id="playAgain">Play again</button>
+                </div>
+                <svg width="700" height="800" viewBox="0 0 350 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g id="hangman">
+                        <g id="person">
+                            <g id="face">
+                                <ellipse id="head" cx="238" cy="116.5" rx="48" ry="46.5" fill="#333333" />
+                                <g id="lefteye">
+                                    <ellipse id="eye" cx="215" cy="109" rx="17" ry="7" fill="white" />
+                                    <ellipse id="eyeball" cx="214.88" cy="108.533" rx="4" ry="3.73333" fill="#B82ADC" />
+                                </g>
+                                <g id="righteye">
+                                    <ellipse id="eye_2" cx="262" cy="109" rx="17" ry="7" fill="white" />
+                                    <ellipse id="eyeball_2" cx="261.88" cy="108.533" rx="4" ry="3.73333"
+                                        fill="#B82ADC" />
+                                </g>
+                                <line id="mouth" x1="219" y1="141" x2="258" y2="141" stroke="#B82ADC"
+                                    stroke-width="2" />
+                                <path id="nose" d="M238 109L242.33 127.75H233.67L238 109Z" fill="#B82ADC"
+                                    fill-opacity="0.948317" />
+                            </g>
+                            <line id="bodyline" x1="238" y1="162" x2="238" y2="269" stroke="#333333" stroke-width="6" />
+                            <g id="legs">
+                                <line id="leftLeg" x1="238.883" y1="266.335" x2="176.883" y2="316.335" stroke="#333333"
+                                    stroke-width="6" />
+                                <line id="rightLeg" y1="-3" x2="79.6492" y2="-3"
+                                    transform="matrix(-0.778413 -0.627752 -0.627752 0.778413 295 317)" stroke="#333333"
+                                    stroke-width="6" />
+                            </g>
+                            <g id="hands">
+                                <line id="leftHand" x1="238.883" y1="202.335" x2="176.883" y2="252.335" stroke="#333333"
+                                    stroke-width="6" />
+                                <line id="rightHand" y1="-3" x2="79.6492" y2="-3"
+                                    transform="matrix(-0.778413 -0.627752 -0.627752 0.778413 295 253)" stroke="#333333"
+                                    stroke-width="6" />
+                            </g>
+                        </g>
+                        <g id="hangFrame">
+                            <line id="Line 2" x1="52" y1="34.9842" x2="53" y2="350.984" stroke="black"
+                                stroke-width="10" />
+                            <line id="Line 3" x1="49.9785" y1="40" x2="282.979" y2="39" stroke="black"
+                                stroke-width="10" />
+                            <path id="Line 4" d="M51 129L131 40" stroke="black" stroke-width="10" />
+                            <line id="Line 5" x1="236.5" y1="70.0096" x2="236.5" y2="43.9904" stroke="black"
+                                stroke-width="5" />
+                        </g>
+                        <path id="hangRope"
+                            d="M188.5 175C188.5 173.129 189.56 171.142 191.935 169.141C194.303 167.145 197.819 165.28 202.295 163.685C211.233 160.499 223.68 158.5 237.5 158.5C251.32 158.5 263.767 160.499 272.705 163.685C277.181 165.28 280.697 167.145 283.065 169.141C285.44 171.142 286.5 173.129 286.5 175C286.5 176.871 285.44 178.858 283.065 180.859C280.697 182.855 277.181 184.72 272.705 186.315C263.767 189.501 251.32 191.5 237.5 191.5C223.68 191.5 211.233 189.501 202.295 186.315C197.819 184.72 194.303 182.855 191.935 180.859C189.56 178.858 188.5 176.871 188.5 175Z"
+                            stroke="#B82ADC" stroke-width="3" />
+                    </g>
+                </svg>
+            </section>
+        </div>
+    </div>
+    <script>
+        const face = document.getElementById('face')
+        const head = document.getElementById('head')
+        const leftEye = document.getElementById('leftEye')
+        const rightEye = document.getElementById('rightEye')
+        const nose = document.getElementById('nose')
+        const mouth = document.getElementById('mouth')
+        const bodyLine = document.getElementById('bodyline')
+        const leftHand = document.getElementById('leftHand')
+        const rightHand = document.getElementById('rightHand')
+        const leftLeg = document.getElementById('leftLeg')
+        const rightLeg = document.getElementById('rightLeg')
+        const hangRope = document.getElementById('hangRope')
+        const hangFrame = document.getElementById('hangFrame')
+
+        const startGameButton = document.getElementById('startGame')
+        const wordInput = document.getElementById('word')
+        const checkLetterButton = document.getElementById('checkLetter')
+        const letterInput = document.getElementById('letter')
+
+        const gameOnSection = document.querySelector('.game-on')
+        const gameOffSection = document.querySelector('.game-off')
+
+        const hangManList = document.querySelector('.hangman-word ul')
+        const wrongGuessesList = document.querySelector('.wrong-guesses ul')
+
+        const playAgainButton = document.getElementById('playAgain')
+        const resultSection = document.querySelector('.result-section')
+        const result = document.getElementById('result')
+        const svg = document.querySelector('.sidebar svg')
+        const MAX_WRONG_GUESSES = 7
+
+        let wrongGuesses = []
+        let hangManWord = []
+        let hangManMap = {}
+        let gameWord = ''
+
+        const reset = () => {
+            hangRope.style.display = 'none'
+            face.style.display = 'none'
+            bodyLine.style.display = 'none'
+            leftHand.style.display = 'none'
+            rightHand.style.display = 'none'
+            leftLeg.style.display = 'none'
+            rightLeg.style.display = 'none'
+            hangRope.style.display = 'none'
+            wordInput.value = ''
+            resultSection.classList.remove('show')
+            wrongGuesses = []
+            hangManWord = []
+            hangManMap = {}
+        }
+
+        const addLetterListItem = (letter) => {
+            return `<li>${letter}</li>`
+        }
+
+        const startGame = (word) => {
+            gameOnSection.classList.toggle('show')
+            gameOffSection.classList.toggle('show')
+            gameWord = word.toLowerCase()
+            // setup the hangman letters entered
+            let html = ''
+            gameWord.split('').forEach((l, index) => {
+                if (hangManMap[l]) {
+                    hangManMap[l].push(index)
+                } else {
+                    hangManMap[l] = [index]
+                }
+                html += addLetterListItem('?')
+            })
+            hangManList.innerHTML = html
+
+            // setup the wrong letters guessed
+            html = ''
+            for (let i = 1; i <= MAX_WRONG_GUESSES; i++) {
+                html += addLetterListItem(' ')
+            }
+            wrongGuessesList.innerHTML = html
+        }
+
+        const updateHangManWord = (letter) => {
+            if (hangManMap[letter]) {
+                hangManMap[letter].forEach(index => {
+                    hangManWord[index] = letter
+                    hangManList.querySelector(`li:nth-child(${index+1})`).textContent = letter
+                })
+            }
+            checkResult()
+        }
+
+        const updateSVG = () => {
+            const failCount = wrongGuesses.length
+            switch (failCount) {
+
+                case 7: {
+                    hangRope.style.display = 'block'
+                }
+                case 6: {
+                    rightLeg.style.display = 'block'
+                }
+                case 5: {
+                    leftLeg.style.display = 'block'
+                }
+                case 4: {
+                    rightHand.style.display = 'block'
+                }
+                case 3: {
+                    leftHand.style.display = 'block'
+                }
+
+                case 2: {
+                    bodyLine.style.display = 'block'
+                }
+
+                case 1: {
+                    face.style.display = 'block'
+                }
+            }
+        }
+
+        const updateWrongGuesses = (letter) => {
+            if (!wrongGuesses.includes(letter)) {
+                wrongGuesses.push(letter)
+                wrongGuessesList.querySelector(`li:nth-child(${wrongGuesses.length})`).textContent = letter
+                updateSVG()
+                checkResult()
+            }
+        }
+
+        const checkWord = () => {
+            if (wordInput.value) {
+                startGame(wordInput.value)
+                wordInput.value = ''
+            }
+        }
+        const checkLetter = () => {
+            if (letterInput.value) {
+                checkAnswer(letterInput.value)
+                letterInput.value = ''
+            }
+        }
+
+        const checkAnswer = (answer) => {
+            const letter = answer.toLowerCase()
+            if (hangManMap[letter]) {
+                updateHangManWord(letter)
+            } else {
+                updateWrongGuesses(letter)
+            }
+        }
+
+        const checkResult = () => {
+            if (hangManWord.join('') === gameWord) {
+                resultSection.classList.toggle('show')
+                result.textContent = 'You Rock 🚀, Awesome you WON the game'
+            } else if (wrongGuesses.length >= MAX_WRONG_GUESSES) {
+                resultSection.classList.toggle('show')
+                result.textContent = 'Bummer, Hangman died 😞, Try again'
+            }
+        }
+
+        reset();
+
+        startGameButton.onclick = () => {
+            checkWord()
+        }
+
+        wordInput.onkeyup = (e) => {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                checkWord()
+            }
+        }
+
+        checkLetterButton.onclick = () => {
+            checkLetter()
+        }
+
+        letterInput.onkeyup = (e) => {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                checkLetter()
+            }
+        }
+
+        playAgainButton.onclick = () => {
+            reset();
+            gameOnSection.classList.toggle('show')
+            gameOffSection.classList.toggle('show')
+        }
+    </script>
+</body>
+
+</html>
